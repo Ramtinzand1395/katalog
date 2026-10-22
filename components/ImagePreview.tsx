@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { GalleryImage } from "@/components/GalleryImage";
 import type { PublicGalleryItem } from "@/models/GalleryItem";
@@ -12,6 +12,18 @@ interface ImagePreviewProps {
 
 export function ImagePreview({ item, onClose }: ImagePreviewProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const hasMultipleImages = item.images.length > 1;
+
+  const showPrevious = () => {
+    setActiveIndex((current) =>
+      current === 0 ? item.images.length - 1 : current - 1,
+    );
+  };
+
+  const showNext = () => {
+    setActiveIndex((current) => (current + 1) % item.images.length);
+  };
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -25,6 +37,23 @@ export function ImagePreview({ item, onClose }: ImagePreviewProps) {
       if (dialog?.open) dialog.close();
     };
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!hasMultipleImages) return;
+      if (event.key === "ArrowLeft") {
+        setActiveIndex((current) => (current + 1) % item.images.length);
+      }
+      if (event.key === "ArrowRight") {
+        setActiveIndex((current) =>
+          current === 0 ? item.images.length - 1 : current - 1,
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [hasMultipleImages, item.images.length]);
 
   return (
     <dialog
@@ -51,14 +80,35 @@ export function ImagePreview({ item, onClose }: ImagePreviewProps) {
           ×
         </button>
 
-        <div className="flex max-h-[78vh] min-h-64 w-full items-center justify-center overflow-hidden rounded-2xl bg-stone-900/60 sm:min-h-96">
+        <div className="relative flex max-h-[70vh] min-h-64 w-full items-center justify-center overflow-hidden rounded-2xl bg-stone-900/60 sm:min-h-96">
           <GalleryImage
-            key={item.imageUrl}
-            src={item.imageUrl}
-            alt={item.name}
-            className="max-h-[78vh] w-auto max-w-full object-contain"
+            key={item.images[activeIndex]}
+            src={item.images[activeIndex]}
+            alt={`${item.name}، تصویر ${activeIndex + 1}`}
+            className="max-h-[70vh] w-auto max-w-full object-contain"
             eager
           />
+
+          {hasMultipleImages ? (
+            <>
+              <button
+                type="button"
+                onClick={showPrevious}
+                className="absolute right-3 grid size-11 place-items-center rounded-full bg-white/90 text-3xl text-stone-900 shadow-lg transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                aria-label="تصویر قبلی"
+              >
+                ›
+              </button>
+              <button
+                type="button"
+                onClick={showNext}
+                className="absolute left-3 grid size-11 place-items-center rounded-full bg-white/90 text-3xl text-stone-900 shadow-lg transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                aria-label="تصویر بعدی"
+              >
+                ‹
+              </button>
+            </>
+          ) : null}
         </div>
         <h2
           id="preview-title"
@@ -66,6 +116,30 @@ export function ImagePreview({ item, onClose }: ImagePreviewProps) {
         >
           {item.name}
         </h2>
+        {hasMultipleImages ? (
+          <div className="mt-3 flex max-w-full gap-2 overflow-x-auto px-1 pb-1" aria-label="تصاویر تابلو">
+            {item.images.map((image, index) => (
+              <button
+                key={image}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                className={`size-16 shrink-0 overflow-hidden rounded-lg border-2 transition-opacity ${
+                  activeIndex === index
+                    ? "border-amber-500 opacity-100"
+                    : "border-transparent opacity-60 hover:opacity-100"
+                }`}
+                aria-label={`نمایش تصویر ${index + 1} از ${item.images.length}`}
+                aria-current={activeIndex === index ? "true" : undefined}
+              >
+                <GalleryImage
+                  src={image}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
     </dialog>
   );

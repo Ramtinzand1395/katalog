@@ -17,9 +17,12 @@ describe("gallery UI", () => {
       <GalleryGrid
         items={[
           {
-            sourceId: "wall-art-123",
+            id: "wall-art-123",
             name: "تابلو نمونه",
-            imageUrl: "https://example.com/art.webp",
+            images: [
+              "https://example.com/art-front.webp",
+              "https://example.com/art-side.webp",
+            ],
           },
         ]}
       />,
@@ -29,6 +32,7 @@ describe("gallery UI", () => {
     expect(html).toContain("md:grid-cols-3");
     expect(html).toContain("lg:grid-cols-4");
     expect(html).toContain("loading=\"eager\"");
+    expect(html).toContain("۲ تصویر");
     expect(html).not.toContain("قیمت");
   });
 });

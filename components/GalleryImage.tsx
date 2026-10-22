@@ -29,8 +29,8 @@ export function GalleryImage({
     );
   }
 
-  // Image hosts are supplied through the private sync API. A native image keeps
-  // arbitrary remote URLs in the browser instead of proxying them through the server.
+  // Image URLs are stored directly in MongoDB. A native image keeps remote URLs
+  // in the browser instead of proxying them through the application server.
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
