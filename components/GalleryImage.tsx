@@ -20,7 +20,7 @@ export function GalleryImage({
   if (failed) {
     return (
       <div
-        className={`flex h-full w-full items-center justify-center bg-stone-100 px-4 text-center text-sm text-stone-500 ${className}`}
+        className={`flex h-full w-full items-center justify-center bg-white/[0.04] px-4 text-center text-sm text-white/35 ${className}`}
         role="img"
         aria-label={`تصویر ${alt} در دسترس نیست`}
       >

@@ -3,13 +3,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "کاتالوگ تابلوهای کرمان آتاری",
-  description: "گالری تابلوهای کرمان آتاری",
+  title: "گالری آثار | مجموعه‌ی منتخب",
+  description: "آرشیو تصویری و مجموعه‌ی منتخب آثار",
 };
 
 export const viewport: Viewport = {
   colorScheme: "light",
-  themeColor: "#fafaf9",
+  themeColor: "#090909",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
